@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Learning Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent1: #ff6b35;
+    --accent2: #00d4ff;
+    --accent3: #a78bfa;
+    --accent4: #34d399;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --card-glow: rgba(0,212,255,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 64px 0 48px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent2);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  /* Topic nav pills */
+  .topic-nav {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+  .nav-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.5px;
+  }
+  .nav-pill:hover, .nav-pill.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(0,212,255,0.07);
+    box-shadow: 0 0 16px rgba(0,212,255,0.15);
+  }
+
+  /* Section header */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .section-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .section-icon.orange { background: rgba(255,107,53,0.15); border: 1px solid rgba(255,107,53,0.3); }
+  .section-icon.blue   { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); }
+  .section-icon.purple { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.25); }
+  .section-title { font-size: 1.5rem; font-weight: 800; }
+  .section-sub { color: var(--muted); font-size: 0.88rem; margin-top: 3px; }
+
+  /* Topic sections */
+  .topic-section { display: none; }
+  .topic-section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+  /* What is box */
+  .what-is {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+  .what-is strong { color: var(--accent2); font-weight: 700; }
+
+  /* Cards grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .card:hover { transform: translateY(-3px); border-color: #2a3a55; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+  .card:hover::before { opacity: 1; }
+  .card.orange::before { background: linear-gradient(90deg, var(--accent1), transparent); }
+  .card.blue::before   { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .card.purple::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+  .card.green::before  { background: linear-gradient(90deg, var(--accent4), transparent); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .card-num {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .card-num.orange { background: rgba(255,107,53,0.15); color: var(--accent1); }
+  .card-num.blue   { background: rgba(0,212,255,0.12); color: var(--accent2); }
+  .card-num.purple { background: rgba(167,139,250,0.12); color: var(--accent3); }
+  .card-num.green  { background: rgba(52,211,153,0.12); color: var(--accent4); }
+
+  .card-title { font-size: 1rem; font-weight: 700; }
+  .card-emoji { font-size: 18px; }
+  .card-desc { color: #94a3b8; font-size: 0.88rem; line-height: 1.65; margin-bottom: 14px; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+  }
+  .tag.good  { background: rgba(52,211,153,0.1); color: var(--accent4); border: 1px solid rgba(52,211,153,0.2); }
+  .tag.warn  { background: rgba(255,107,53,0.1); color: var(--accent1); border: 1px solid rgba(255,107,53,0.2); }
+  .tag.info  { background: rgba(0,212,255,0.08); color: var(--accent2); border: 1px solid rgba(0,212,255,0.2); }
+  .tag.purple-t { background: rgba(167,139,250,0.1); color: var(--accent3); border: 1px solid rgba(167,139,250,0.2); }
+
+  /* Comparison table */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .table-title {
+    padding: 16px 22px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    padding: 12px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 13px 16px;
+    font-size: 0.88rem;
+    border-bottom: 1px solid rgba(31,45,69,0.5);
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td:first-child { font-weight: 600; color: var(--text); }
+
+  /* Tip box */
+  .tip-box {
+    background: linear-gradient(135deg, rgba(167,139,250,0.08), rgba(0,212,255,0.05));
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .tip-text { font-size: 0.9rem; line-height: 1.7; color: #94a3b8; }
+  .tip-text strong { color: var(--accent3); }
+
+  /* Memory trick */
+  .memory-box {
+    background: var(--surface2);
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+  .memory-box .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent4);
+    margin-bottom: 8px;
+  }
+
+  /* Lifecycle viz */
+  .lifecycle {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 28px;
+    overflow-x: auto;
+  }
+  .lc-step {
+    flex: 1;
+    min-width: 110px;
+    text-align: center;
+    padding: 12px 8px;
+  }
+  .lc-dot {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    margin: 0 auto 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .lc-arrow {
+    font-size: 1.2rem;
+    color: var(--muted);
+    padding: 0 4px;
+    margin-top: -24px;
+  }
+  .lc-name { font-size: 0.78rem; font-weight: 700; }
+  .lc-day  { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); margin-top: 3px; }
+
+  /* Summary banner */
+  .summary-banner {
+    background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(167,139,250,0.06));
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .summary-banner h3 { font-size: 1.1rem; margin-bottom: 20px; color: var(--accent2); }
+  .summary-pills { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .s-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 0.82rem;
+    text-align: left;
+    min-width: 180px;
+  }
+  .s-pill .sp-label { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-family: 'Space Mono', monospace; }
+  .s-pill .sp-val { font-weight: 700; font-size: 0.95rem; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-family: 'Space Mono', monospace;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 600px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .summary-pills { flex-direction: column; align-items: center; }
+    .lifecycle { flex-direction: column; align-items: flex-start; }
+    .lc-arrow { transform: rotate(90deg); margin: 4px auto; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">☁️ AWS Learner's Guide</div>
+    <h1>Master AWS <span>Core Services</span><br>in Minutes</h1>
+    <p>A beginner-friendly summary of Route 53, EC2 Pricing, and S3 Storage Classes — explained simply and clearly.</p>
+  </div>
+
+  <!-- Nav -->
+  <div class="topic-nav">
+    <div class="nav-pill active" onclick="show('route53', this)">🌐 Route 53</div>
+    <div class="nav-pill" onclick="show('ec2', this)">💻 EC2 Pricing</div>
+    <div class="nav-pill" onclick="show('s3', this)">🗄️ S3 Storage</div>
+    <div class="nav-pill" onclick="show('all', this)">📋 Full Summary</div>
+  </div>
+
+  <!-- ═══════════════ ROUTE 53 ═══════════════ -->
+  <div class="topic-section active" id="route53">
+    <div class="section-header">
+      <div class="section-icon orange">🌐</div>
+      <div>
+        <div class="section-title">Route 53 — Routing Policies</div>
+        <div class="section-sub">How AWS directs internet traffic to the right place</div>
+      </div>
+    </div>
+
+    <div class="what-is">
+      <strong>🤔 What is it?</strong> Think of Route 53 like a <strong>GPS for the internet</strong>. When someone types your website URL, Route 53 decides <em>which server</em> to send them to — and it can make smart decisions based on speed, location, health, and more.
+    </div>
+
+    <div class="memory-box">
+      <div class="label">🧠 Memory Trick</div>
+      Route 53 = Internet Traffic Cop 🚦 — it stands at the intersection and points visitors to the right server based on rules you set.
+    </div>
+
+    <div class="cards-grid">
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">01</div>
+          <span class="card-emoji">➡️</span>
+          <div class="card-title">Simple</div>
+        </div>
+        <div class="card-desc">One domain → One server. The most basic setup. Like a street sign pointing to one destination.</div>
+        <div class="tag-row"><span class="tag info">No health checks</span><span class="tag good">Easy setup</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">02</div>
+          <span class="card-emoji">⚖️</span>
+          <div class="card-title">Weighted</div>
+        </div>
+        <div class="card-desc">Split traffic by percentage. Send 90% to Server A and 10% to Server B — great for testing new features slowly.</div>
+        <div class="tag-row"><span class="tag good">A/B Testing</span><span class="tag info">0–255 weights</span></div>
+      </div>
+      <div class="card purple">
+        <div class="card-header">
+          <div class="card-num purple">03</div>
+          <span class="card-emoji">⚡</span>
+          <div class="card-title">Latency</div>
+        </div>
+        <div class="card-desc">Automatically sends users to the fastest server for them. A user in Europe goes to Europe servers, not USA servers.</div>
+        <div class="tag-row"><span class="tag good">Fastest speed</span><span class="tag purple-t">Multi-region</span></div>
+      </div>
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">04</div>
+          <span class="card-emoji">🔁</span>
+          <div class="card-title">Failover</div>
+        </div>
+        <div class="card-desc">Primary server goes down? Route 53 automatically switches to a backup server. Like a spare tire for your website.</div>
+        <div class="tag-row"><span class="tag warn">Needs health checks</span><span class="tag good">High availability</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">05</div>
+          <span class="card-emoji">🗺️</span>
+          <div class="card-title">Geolocation</div>
+        </div>
+        <div class="card-desc">Route users based on their country. Users in Egypt see Arabic content; users in Germany see German content.</div>
+        <div class="tag-row"><span class="tag info">By country/region</span><span class="tag good">Localization</span></div>
+      </div>
+      <div class="card purple">
+        <div class="card-header">
+          <div class="card-num purple">06</div>
+          <span class="card-emoji">📍</span>
+          <div class="card-title">Geoproximity</div>
+        </div>
+        <div class="card-desc">Route by resource location, not user location. You can even "pull" traffic toward a region using bias values.</div>
+        <div class="tag-row"><span class="tag purple-t">Traffic Flow needed</span><span class="tag info">Bias control</span></div>
+      </div>
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">07</div>
+          <span class="card-emoji">🖥️</span>
+          <div class="card-title">IP-Based</div>
+        </div>
+        <div class="card-desc">Route based on the user's IP address. Useful for directing corporate IPs to internal servers or specific ISPs.</div>
+        <div class="tag-row"><span class="tag info">By IP range</span><span class="tag good">ISP control</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">08</div>
+          <span class="card-emoji">🎲</span>
+          <div class="card-title">Multi-Value</div>
+        </div>
+        <div class="card-desc">Returns up to 8 healthy servers at random. Clients pick one. Like a poor man's load balancer — simple and effective.</div>
+        <div class="tag-row"><span class="tag good">Up to 8 IPs</span><span class="tag warn">Not a true LB</span></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text"><strong>Quick Decision Guide:</strong> Need backup? → <strong>Failover</strong>. Testing new features? → <strong>Weighted</strong>. Global users? → <strong>Latency</strong>. Different content per country? → <strong>Geolocation</strong>. Just starting out? → <strong>Simple</strong>.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ EC2 PRICING ═══════════════ -->
+  <div class="topic-section" id="ec2">
+    <div class="section-header">
+      <div class="section-icon blue">💻</div>
+      <div>
+        <div class="section-title">EC2 — Pricing Models</div>
+        <div class="section-sub">5 ways to pay for your cloud servers</div>
+      </div>
+    </div>
+
+    <div class="what-is">
+      <strong>🤔 What is it?</strong> EC2 is AWS's virtual servers (computers in the cloud). Instead of buying one pricing model, AWS gives you <strong>5 different ways to pay</strong> — each suited to different situations. Choosing the right one can save you <strong>up to 90%</strong> on your bill.
+    </div>
+
+    <div class="memory-box">
+      <div class="label">🧠 Memory Trick</div>
+      Think of EC2 pricing like renting a car: 🚗 <strong>On-Demand</strong> = daily rental | 📅 <strong>Reserved</strong> = yearly lease | 🎲 <strong>Spot</strong> = standby seat (cheap but can be cancelled) | 💳 <strong>Savings Plan</strong> = loyalty card | 🏠 <strong>Dedicated</strong> = private chauffeur
+    </div>
+
+    <div class="cards-grid">
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">01</div>
+          <span class="card-emoji">🔓</span>
+          <div class="card-title">On-Demand</div>
+        </div>
+        <div class="card-desc">Pay by the second, no commitment. Start and stop anytime. The most flexible but most expensive option.</div>
+        <div class="tag-row"><span class="tag good">No commitment</span><span class="tag warn">Most expensive</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">02</div>
+          <span class="card-emoji">📅</span>
+          <div class="card-title">Reserved Instances</div>
+        </div>
+        <div class="card-desc">Commit to 1 or 3 years, get up to 72% off. Like signing a long lease — you save big if you're sure you'll use it.</div>
+        <div class="tag-row"><span class="tag good">Up to 72% off</span><span class="tag warn">1–3 yr lock-in</span></div>
+      </div>
+      <div class="card purple">
+        <div class="card-header">
+          <div class="card-num purple">03</div>
+          <span class="card-emoji">⚡</span>
+          <div class="card-title">Spot Instances</div>
+        </div>
+        <div class="card-desc">Buy unused AWS capacity at huge discounts — up to 90% off! But AWS can reclaim it with 2-minutes notice. Great for batch jobs.</div>
+        <div class="tag-row"><span class="tag good">Up to 90% off</span><span class="tag warn">Can be interrupted</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">04</div>
+          <span class="card-emoji">💳</span>
+          <div class="card-title">Savings Plans</div>
+        </div>
+        <div class="card-desc">Commit to a $/hour spend for 1–3 years. More flexible than Reserved — discounts apply across EC2, Lambda, and more services.</div>
+        <div class="tag-row"><span class="tag good">Up to 72% off</span><span class="tag info">Multi-service</span></div>
+      </div>
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">05</div>
+          <span class="card-emoji">🏠</span>
+          <div class="card-title">Dedicated Hosts</div>
+        </div>
+        <div class="card-desc">A physical server just for you. Most expensive, but required for strict compliance or bring-your-own-license (BYOL) software.</div>
+        <div class="tag-row"><span class="tag warn">Most expensive</span><span class="tag good">Full isolation</span></div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-title">💰 Savings at a Glance</div>
+      <table>
+        <tr>
+          <th>Model</th><th>Max Savings</th><th>Commitment</th><th>Interruptible?</th>
+        </tr>
+        <tr><td>🔓 On-Demand</td><td>—</td><td>None</td><td>No</td></tr>
+        <tr><td>📅 Reserved</td><td>Up to 72%</td><td>1–3 years</td><td>No</td></tr>
+        <tr><td>⚡ Spot</td><td>Up to 90%</td><td>None</td><td>Yes ⚠️</td></tr>
+        <tr><td>💳 Savings Plans</td><td>Up to 72%</td><td>1–3 years</td><td>No</td></tr>
+        <tr><td>🏠 Dedicated</td><td>Varies</td><td>Optional</td><td>No</td></tr>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text"><strong>Best Strategy:</strong> Start with <strong>On-Demand</strong> for 2–3 months to understand your usage. Then switch to <strong>Savings Plans or Reserved</strong> for steady workloads. Use <strong>Spot</strong> for background batch jobs to save maximum money.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ S3 STORAGE ═══════════════ -->
+  <div class="topic-section" id="s3">
+    <div class="section-header">
+      <div class="section-icon purple">🗄️</div>
+      <div>
+        <div class="section-title">S3 — Storage Classes</div>
+        <div class="section-sub">7 tiers of storage — from hot to frozen</div>
+      </div>
+    </div>
+
+    <div class="what-is">
+      <strong>🤔 What is it?</strong> Amazon S3 is cloud file storage. It has <strong>7 storage classes</strong> — think of them like a <strong>temperature scale from 🔥 hot to ❄️ frozen</strong>. The "hotter" the data (accessed frequently), the more you pay. The "colder" (rarely accessed), the cheaper — but slower to retrieve.
+    </div>
+
+    <div class="memory-box">
+      <div class="label">🧠 Memory Trick — The Temperature Scale</div>
+      🔥 Standard → 🌡️ Intelligent-Tiering → 🌤️ Standard-IA → ☁️ One Zone-IA → 🧊 Glacier Instant → ❄️ Glacier Flexible → 🥶 Deep Archive<br>
+      <em style="color:#64748b; font-size:0.82rem;">Colder = Cheaper storage cost, but longer retrieval time</em>
+    </div>
+
+    <!-- Lifecycle visual -->
+    <div class="lifecycle">
+      <div class="lc-step">
+        <div class="lc-dot" style="background:rgba(255,107,53,0.2);border:2px solid rgba(255,107,53,0.5)">🔥</div>
+        <div class="lc-name" style="color:#ff6b35">Standard</div>
+        <div class="lc-day">Day 0</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-dot" style="background:rgba(0,212,255,0.15);border:2px solid rgba(0,212,255,0.3)">🌤️</div>
+        <div class="lc-name" style="color:#00d4ff">Std-IA</div>
+        <div class="lc-day">Day 30</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-dot" style="background:rgba(167,139,250,0.15);border:2px solid rgba(167,139,250,0.3)">🧊</div>
+        <div class="lc-name" style="color:#a78bfa">Glacier</div>
+        <div class="lc-day">Day 90</div>
+      </div>
+      <div class="lc-arrow">→</div>
+      <div class="lc-step">
+        <div class="lc-dot" style="background:rgba(52,211,153,0.12);border:2px solid rgba(52,211,153,0.25)">❄️</div>
+        <div class="lc-name" style="color:#34d399">Deep Archive</div>
+        <div class="lc-day">Day 365</div>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">01</div>
+          <span class="card-emoji">🔥</span>
+          <div class="card-title">Standard</div>
+        </div>
+        <div class="card-desc">The default. Instant access, highest cost. Use for active data — your app's files, user uploads, website assets.</div>
+        <div class="tag-row"><span class="tag good">Instant access</span><span class="tag warn">~$0.023/GB</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">02</div>
+          <span class="card-emoji">🤖</span>
+          <div class="card-title">Intelligent-Tiering</div>
+        </div>
+        <div class="card-desc">Let AWS auto-optimize your costs. It watches how often you access files and moves them automatically. Zero retrieval fees.</div>
+        <div class="tag-row"><span class="tag good">Auto-optimized</span><span class="tag info">No retrieval fee</span></div>
+      </div>
+      <div class="card purple">
+        <div class="card-header">
+          <div class="card-num purple">03</div>
+          <span class="card-emoji">🌤️</span>
+          <div class="card-title">Standard-IA</div>
+        </div>
+        <div class="card-desc">~45% cheaper than Standard, but you pay a retrieval fee. For files you rarely open — monthly backups, old reports.</div>
+        <div class="tag-row"><span class="tag good">45% cheaper</span><span class="tag warn">Retrieval fee</span><span class="tag info">30-day min</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">04</div>
+          <span class="card-emoji">☁️</span>
+          <div class="card-title">One Zone-IA</div>
+        </div>
+        <div class="card-desc">Like Standard-IA but stored in only 1 data center. Cheaper, but if that zone goes down — data is gone. Only for non-critical files.</div>
+        <div class="tag-row"><span class="tag good">Even cheaper</span><span class="tag warn">Single AZ risk</span></div>
+      </div>
+      <div class="card orange">
+        <div class="card-header">
+          <div class="card-num orange">05</div>
+          <span class="card-emoji">🧊</span>
+          <div class="card-title">Glacier Instant</div>
+        </div>
+        <div class="card-desc">Archive storage with instant retrieval. Use for quarterly-accessed data — medical records, compliance documents.</div>
+        <div class="tag-row"><span class="tag good">Instant retrieval</span><span class="tag info">90-day min</span></div>
+      </div>
+      <div class="card blue">
+        <div class="card-header">
+          <div class="card-num blue">06</div>
+          <span class="card-emoji">❄️</span>
+          <div class="card-title">Glacier Flexible</div>
+        </div>
+        <div class="card-desc">Cold archive. Retrieval takes minutes to 12 hours. Much cheaper. For data you access once or twice per year.</div>
+        <div class="tag-row"><span class="tag info">1 min–12 hrs</span><span class="tag good">Very low cost</span></div>
+      </div>
+      <div class="card purple">
+        <div class="card-header">
+          <div class="card-num purple">07</div>
+          <span class="card-emoji">🥶</span>
+          <div class="card-title">Deep Archive</div>
+        </div>
+        <div class="card-desc">The absolute cheapest storage AWS offers (~$0.001/GB). Retrieval takes 12–48 hours. For legal/compliance data you almost never open.</div>
+        <div class="tag-row"><span class="tag good">~$0.001/GB</span><span class="tag warn">12–48 hr retrieval</span><span class="tag info">180-day min</span></div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text"><strong>Not sure which to use?</strong> Use <strong>Intelligent-Tiering</strong> — AWS handles optimization automatically. Only manually pick a class when you <em>know</em> your access patterns precisely.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ FULL SUMMARY ═══════════════ -->
+  <div class="topic-section" id="all">
+    <div class="section-header">
+      <div class="section-icon blue">📋</div>
+      <div>
+        <div class="section-title">Full AWS Summary</div>
+        <div class="section-sub">All 3 topics in one view</div>
+      </div>
+    </div>
+
+    <div class="summary-banner">
+      <h3>🎯 The 3-Second Rule: What Each Service Does</h3>
+      <div class="summary-pills">
+        <div class="s-pill">
+          <div class="sp-label">🌐 Route 53</div>
+          <div class="sp-val">Directs traffic to servers</div>
+        </div>
+        <div class="s-pill">
+          <div class="sp-label">💻 EC2</div>
+          <div class="sp-val">The servers themselves</div>
+        </div>
+        <div class="s-pill">
+          <div class="sp-label">🗄️ S3</div>
+          <div class="sp-val">Stores files &amp; data</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-title">🌐 Route 53 — 8 Routing Policies</div>
+      <table>
+        <tr><th>Policy</th><th>Simple Explanation</th><th>Use When...</th></tr>
+        <tr><td>➡️ Simple</td><td>One server only</td><td>Just starting out</td></tr>
+        <tr><td>⚖️ Weighted</td><td>Split traffic by %</td><td>A/B testing features</td></tr>
+        <tr><td>⚡ Latency</td><td>Fastest server wins</td><td>You have global users</td></tr>
+        <tr><td>🔁 Failover</td><td>Backup takes over</td><td>You need high availability</td></tr>
+        <tr><td>🗺️ Geolocation</td><td>Route by user's country</td><td>Different content per region</td></tr>
+        <tr><td>📍 Geoproximity</td><td>Route by resource location</td><td>Fine-tuned regional control</td></tr>
+        <tr><td>🖥️ IP-Based</td><td>Route by IP address</td><td>ISP-specific routing</td></tr>
+        <tr><td>🎲 Multi-Value</td><td>Random healthy server</td><td>Simple load distribution</td></tr>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-title">💻 EC2 — 5 Pricing Models</div>
+      <table>
+        <tr><th>Model</th><th>Simple Explanation</th><th>Max Savings</th></tr>
+        <tr><td>🔓 On-Demand</td><td>Pay per second, no contract</td><td>—</td></tr>
+        <tr><td>📅 Reserved</td><td>1–3 year commitment</td><td>Up to 72%</td></tr>
+        <tr><td>⚡ Spot</td><td>Cheap unused capacity (interruptible)</td><td>Up to 90%</td></tr>
+        <tr><td>💳 Savings Plans</td><td>Flexible $/hour commitment</td><td>Up to 72%</td></tr>
+        <tr><td>🏠 Dedicated Host</td><td>Your own physical server</td><td>Compliance only</td></tr>
+      </table>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-title">🗄️ S3 — 7 Storage Classes</div>
+      <table>
+        <tr><th>Class</th><th>Simple Explanation</th><th>Retrieval Speed</th><th>Cost</th></tr>
+        <tr><td>🔥 Standard</td><td>Always-on, active data</td><td>Instant</td><td>💰💰💰</td></tr>
+        <tr><td>🤖 Intelligent-Tiering</td><td>Auto-optimizes cost</td><td>Instant</td><td>💰💰</td></tr>
+        <tr><td>🌤️ Standard-IA</td><td>Infrequent access</td><td>Instant</td><td>💰💰</td></tr>
+        <tr><td>☁️ One Zone-IA</td><td>Single AZ, lower cost</td><td>Instant</td><td>💰</td></tr>
+        <tr><td>🧊 Glacier Instant</td><td>Archive, instant access</td><td>Milliseconds</td><td>💰</td></tr>
+        <tr><td>❄️ Glacier Flexible</td><td>Cold archive</td><td>1 min–12 hrs</td><td>💰</td></tr>
+        <tr><td>🥶 Deep Archive</td><td>Frozen, almost never accessed</td><td>12–48 hours</td><td>💰 cheapest</td></tr>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <div class="tip-icon">🚀</div>
+      <div class="tip-text">
+        <strong>How these 3 services work together:</strong><br>
+        A user visits your website → <strong>Route 53</strong> sends them to the nearest/fastest server → <strong>EC2</strong> runs your application code → the app reads/writes files and data from <strong>S3</strong>. This trio forms the backbone of most AWS-powered applications!
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    ☁️ AWS Learning Guide &nbsp;·&nbsp; Built for learners &nbsp;·&nbsp; May 2026
+  </div>
+</div>
+
+<script>
+  function show(id, el) {
+    document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
