@@ -173,6 +173,6 @@ arn:aws:iam::X:role/S3-CrossAccount-Access-Role
 
 🛡️ **AWS IAM Cross-Account S3 Access Lab** · 2026
 
-Made with ❤️ by [Mohamed el-faramawy](https://github.com/70KSHA)
+Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
 
 </div>
