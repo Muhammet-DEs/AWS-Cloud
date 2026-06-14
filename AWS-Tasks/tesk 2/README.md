@@ -41,19 +41,9 @@ In enterprise cloud environments, resources often span **multiple AWS accounts**
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────┐         ┌─────────────────────────────┐
-│        Account A            │         │        Account B            │
-│   ID: 450808236077          │         │   ID: 096354091826          │
-│                             │         │                             │
-│  👤 CrossAccount-User       │──STS──▶ │  🎭 S3-CrossAccount-        │
-│                             │ Assume  │     Access-Role             │
-│  📋 Assume-S3-CrossRole-    │  Role   │                             │
-│     Policy                  │         │  🪣 cross-account-store     │
-│     (sts:AssumeRole)        │         │     (S3 Bucket)             │
-└─────────────────────────────┘         └─────────────────────────────┘
-         Management Account                    Production Account
-```
 
+```
+![](arch.png)
 ---
 
 ## 📌 Task 1 — Create S3 Bucket & Cross-Account Role (Account B)
@@ -65,6 +55,7 @@ In enterprise cloud environments, resources often span **multiple AWS accounts**
 1. Navigated to **S3** service → clicked **Create bucket**
 2. Named the bucket: **`cross-account-store`**
 3. Left all default secure settings unchanged
+![](i1.png)
 
 ### 🎭 Create Cross-Account IAM Role
 
@@ -76,16 +67,16 @@ In enterprise cloud environments, resources often span **multiple AWS accounts**
 9. Copied the generated Role ARN:
 
 ```
-arn:aws:iam::096354091826:role/S3-CrossAccount-Access-Role
+arn:aws:iam::X:role/S3-CrossAccount-Access-Role
 ```
 
-> 📸 **[Screen 6: Account B IAM Role — Trust Relationship tab pointing to Account A]**
+> ![](i2acc1.png)
 
 ---
 
 ## 📌 Task 2 — Create IAM User & STS Policy (Account A)
 
-> 👤 Provisioned the client identity and the STS permission bridge in the management account (**Account A — ID: `450808236077`**)
+> 👤 Provisioned the client identity and the STS permission bridge in the management account (**Account A — ID: `Z`**)
 
 ### 👤 Create IAM User
 
@@ -115,7 +106,7 @@ arn:aws:iam::096354091826:role/S3-CrossAccount-Access-Role
 7. Refreshed the list → selected the new policy → clicked **Create user**
 8. Downloaded the **`.csv` credentials file**
 
-> 📸 **[Screen 7: User creation success page — "Download .csv file" button for CrossAccount-User]**
+> ![](i3acc2n.png)
 
 ---
 
@@ -138,8 +129,7 @@ arn:aws:iam::096354091826:role/S3-CrossAccount-Access-Role
 
 5. Clicked **Switch Role** → Top bar successfully changed to **`S3-Admin-Mode`** ✅
 
-> 📸 **[Screen 8: Cross-account console showing active "S3-Admin-Mode" top-bar banner]**
-
+> ![](i4acc2.png)
 ---
 
 ## 📌 Task 4 — Upload File to Remote Bucket
@@ -151,7 +141,8 @@ arn:aws:iam::096354091826:role/S3-CrossAccount-Access-Role
 3. Clicked **Upload** → added local file: **`Brown logo.png`**
 4. ✅ Upload completed with **100% Success** and zero permission errors
 
-> 📸 **[Screen 9: S3 console upload success dashboard displaying 'Brown logo.png']**
+> ![](i5acc2n.png)
+  ![](i6acc1.png)
 
 ---
 
