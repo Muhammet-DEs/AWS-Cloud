@@ -118,5 +118,10 @@
 > - 🔒 Always use **Incognito mode** when testing IAM user access to avoid session conflicts
 
 ---
+<div align="center"> 
 
 *🛡️ AWS IAM & Billing Administration Lab · 2026*
+
+Made with ❤️ by [Mohamed el-faramawy]
+
+</div>
