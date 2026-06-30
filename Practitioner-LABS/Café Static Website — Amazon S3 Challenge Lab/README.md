@@ -222,6 +222,11 @@ A fully functional, publicly accessible café website hosted on Amazon S3 — pr
 
 ---
 
-<p align="center">
-  🧾 <b>AWS Hands-On Lab Series</b> — Amazon S3 Static Website Hosting & Resilience
-</p>
+## 👨‍💻 Author
+<div align="center">
+
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
+---
+⭐ *If you found this helpful, feel free to star the repo!*
+
+</div>
