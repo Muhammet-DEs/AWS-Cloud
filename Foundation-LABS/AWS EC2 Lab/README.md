@@ -160,10 +160,11 @@ echo '<html><h1>Hello From Your Web Server!</h1></html>' > /var/www/html/index.h
 
 ---
 
+## 👨‍💻 Author
 <div align="center">
 
-**© 2023 Amazon Web Services, Inc. — Lab for educational purposes only.**
-
-⭐ *If you found this helpful, consider starring the repository!*
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
+---
+⭐ *If you found this helpful, feel free to star the repo!*
 
 </div>

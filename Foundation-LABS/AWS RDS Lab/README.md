@@ -136,9 +136,10 @@ Successfully performed **CRUD operations** (Create, Read, Update, Delete) on con
 ---
 
 ## 👨‍💻 Author
+<div align="center">
 
-> Lab completed as part of the **AWS Cloud Foundations** curriculum.
-
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
 ---
-
 ⭐ *If you found this helpful, feel free to star the repo!*
+
+</div>

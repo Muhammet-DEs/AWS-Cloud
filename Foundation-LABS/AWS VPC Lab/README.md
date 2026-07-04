@@ -183,6 +183,11 @@ This lab is based on AWS Training content.
 
 ---
 
+## 👨‍💻 Author
 <div align="center">
-  Made with ❤️ while learning AWS Cloud Infrastructure
+
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
+---
+⭐ *If you found this helpful, feel free to star the repo!*
+
 </div>

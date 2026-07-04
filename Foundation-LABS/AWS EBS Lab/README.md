@@ -215,10 +215,11 @@ ls /mnt/data-store2/
 
 ---
 
+## 👨‍💻 Author
 <div align="center">
 
-**© 2026 Amazon Web Services, Inc. — Lab for educational purposes only.**
-
-⭐ *If you found this helpful, consider starring the repository!*
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
+---
+⭐ *If you found this helpful, feel free to star the repo!*
 
 </div>

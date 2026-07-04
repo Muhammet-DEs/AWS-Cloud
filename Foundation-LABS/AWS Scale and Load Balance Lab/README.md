@@ -215,10 +215,11 @@ http://LabELB-xxxxxxxxxx.us-west-2.elb.amazonaws.com
 
 ---
 
+## 👨‍💻 Author
 <div align="center">
 
-**© 2023 Amazon Web Services, Inc. — Lab for educational purposes only.**
-
-⭐ *If you found this helpful, consider starring the repository!*
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
+---
+⭐ *If you found this helpful, feel free to star the repo!*
 
 </div>

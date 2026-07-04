@@ -81,3 +81,11 @@ Using an isolated **Incognito / Private Window**, navigate to your designated ac
 
 ---
 *Disclaimer: Created and compiled for educational deployment blueprints and cloud governance architectures. All structural access flags represent intended design behaviors.*
+## 👨‍💻 Author
+<div align="center">
+
+> Made with ❤️ by [Mohamed el-faramawy](https://github.com/Muhammet-DEs)
+---
+⭐ *If you found this helpful, feel free to star the repo!*
+
+</div>
